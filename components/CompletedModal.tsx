@@ -93,7 +93,7 @@ export default function CompletedModal({ visible, completedTodos, onClose, onTog
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: 'FAF8F5',
   },
   header: {
     flexDirection: 'row',
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 40,
     paddingBottom: 20,
-    backgroundColor: 'white',
+    backgroundColor: 'FAF8F5',
   },
   headerTitle: {
     fontSize: 40,

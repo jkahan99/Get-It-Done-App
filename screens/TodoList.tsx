@@ -44,16 +44,23 @@ const addTodo = async (title: string) => {
   setTodos([...todos, newTodo]);
   
   // THEN do the slow AI stuff in background
-  const aiMessage = await generateWittyNotification(title);
-  console.log('AI message for "' + title + '":', aiMessage);
+  const baseMessage = await generateWittyNotification(title);
+  console.log('AI message for "' + title + '":', baseMessage);
 
-  const notificationId = await scheduleNotification(newTodo.id, aiMessage, 15);
-  console.log('Notification scheduled for 15 seconds!');
-  
+// Create variations programmatically (no extra cost!)
+  const message1h = `⏰ ${baseMessage}`;                    // 1 hour: urgency
+  const message23h = baseMessage;                            // 23 hours: original  
+  const message1w = `Final reminder: ${baseMessage} 😅`;     // 1 week: guilt trip
+
+  // Schedule 3 notifications with different messages
+  const notificationId1h = await scheduleNotification(newTodo.id, message1h, 3600);
+  const notificationId23h = await scheduleNotification(newTodo.id, message23h, 82800);
+  const notificationId1w = await scheduleNotification(newTodo.id, message1w, 604800);
+ 
   // Update the todo with notification ID
   setTodos(prevTodos => prevTodos.map(todo => 
     todo.id === newTodo.id 
-      ? {...todo, notificationId} 
+      ? {...todo, notificationIds: [notificationId1h, notificationId23h, notificationId1w]} 
       : todo
   ));
 }
@@ -65,9 +72,9 @@ const toggleComplete = (id: number) => {
   if (todo && !todo.completed) {
     setJustCompleted(id);
 
-    if (todo.notificationId) {
-      cancelNotification(todo.notificationId);
-      console.log('Notification cancelled!');
+    if (todo.notificationIds) {
+      todo.notificationIds.forEach(id => cancelNotification(id));
+      console.log('All 3 notifications cancelled!');
     }
     setTimeout(() => {
       setTodos(todos.map(todo => {
@@ -97,9 +104,9 @@ const toggleComplete = (id: number) => {
 const deleteTodo = (id: number) => {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       const todo = todos.find(t => t.id === id);
-  if (todo?.notificationId) {
-    cancelNotification(todo.notificationId);
-    console.log('Notification cancelled!');
+ if (todo?.notificationIds) {
+    todo.notificationIds.forEach(id => cancelNotification(id));
+    console.log('All 3 notifications cancelled!');
   }
   setTodos(todos.filter(todo => todo.id !== id));
 };
@@ -215,17 +222,11 @@ const AnimatedTodoCircle = ({ item, onToggle }: { item: Todo; onToggle: () => vo
   );
 };
 return (
-  <>
+  <View style={{ flex: 1, backgroundColor: '#FAF8F5' }}>
     <View style={styles.container}>
       {/* HEADER */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>SimpleTODO</Text>
-        <TouchableOpacity 
-          style={styles.newButton}
-          onPress={() => setModalVisible(true)}
-        >
-          <Text style={styles.newButtonText}>New</Text>
-        </TouchableOpacity>
       </View>
 
       {/* TODO LIST */}
@@ -233,39 +234,30 @@ return (
         data={activeTodos}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-  <View style={styles.todoRow}>
-    {/* CIRCLE - Click to toggle complete */}
-    {/*<TouchableOpacity onPress={() => toggleComplete(item.id)}>
-      <View style={item.completed ? styles.circleCompleted : styles.circle}>
-        {item.completed && <Text style={styles.checkmark}>✓</Text>}
-      </View>
-    </TouchableOpacity>*/}
-    {/* CIRCLE - Click to toggle complete */}
-<AnimatedTodoCircle item={item} onToggle={() => toggleComplete(item.id)} />
-    
-    {/* TEXT - Click to edit */}
-    <TouchableOpacity 
-      style={styles.todoContent}
-      onPress={() => openEditModal(item.id)}
-    >
-      <Text style={styles.todoTitle}>
-  {item.title}
-</Text>
-    </TouchableOpacity>
-    
-    {/* DELETE BUTTON */}
-    <TouchableOpacity onPress={() => deleteTodo(item.id)}>
-      <Text style={styles.deleteButton}>🗑️</Text>
-    </TouchableOpacity>
-  </View>
-)}
+          <View style={styles.todoRow}>
+            <AnimatedTodoCircle item={item} onToggle={() => toggleComplete(item.id)} />
+            
+            <TouchableOpacity 
+              style={styles.todoContent}
+              onPress={() => openEditModal(item.id)}
+            >
+              <Text style={styles.todoTitle}>
+                {item.title}
+              </Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity onPress={() => deleteTodo(item.id)}>
+              <Text style={styles.deleteButton}>🗑️</Text>
+            </TouchableOpacity>
+          </View>
+        )}
         ListEmptyComponent={
-  <View style={styles.emptyState}>
-    <Text style={styles.emptyIcon}>✨</Text>
-    <Text style={styles.emptyTitle}>All clear!</Text>
-    <Text style={styles.emptyText}>Tap "New" to add a task</Text>
-  </View>
-}
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyIcon}>✨</Text>
+            <Text style={styles.emptyTitle}>All clear!</Text>
+            <Text style={styles.emptyText}>Tap "New" to add a task</Text>
+          </View>
+        }
       />
 
       {/* COMPLETED BUTTON */}
@@ -276,6 +268,14 @@ return (
         <Text style={styles.completedButtonText}>
           ✓ {completedTodos.length}
         </Text>
+      </TouchableOpacity>
+
+      {/* NEW BUTTON */}
+      <TouchableOpacity 
+        style={styles.newButton}
+        onPress={() => setModalVisible(true)}
+      >
+        <Text style={styles.newButtonText}>+</Text>
       </TouchableOpacity>
     </View>
 
@@ -319,13 +319,15 @@ return (
         setEditText('');
       }}
     />
-  </>
+  </View>
 );
 
 }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  backgroundColor: '#FAF8F5',
+
   },
   text: {  // Add this
     color: 'blue',
@@ -338,7 +340,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,           // Space on left and right
     paddingTop: 40,                  // Space from top (for status bar)
     paddingBottom: 20,
-    backgroundColor: 'white',
+  backgroundColor: '#FAF8F5',  // Add this - warm cream
   },
 circle: {
   width: 24,
@@ -359,7 +361,7 @@ modalOverlay: {
 todoRow: {
   flexDirection: 'row',
   alignItems: 'center',
-  backgroundColor: 'white',
+  backgroundColor: '#FAF8F5',  // Change from 'white' to match background
   paddingVertical: 14,
   paddingHorizontal: 20,
   borderBottomWidth: 1,
@@ -394,6 +396,10 @@ todoContent: {
 deleteButton: {
   fontSize: 20,
   marginLeft: 10,
+},
+safeArea: {
+  flex: 1,
+  backgroundColor: '#FAF8F5',  // Extends cream to edges
 },
 modalContent: {
   backgroundColor: 'white',
@@ -439,31 +445,51 @@ todoTitle: {
   color: '#000',
 },
 newButton: {
-  paddingHorizontal: 16,
-  paddingVertical: 8,
+  position: 'absolute',
+  bottom: 30,
+  right: 30,
   backgroundColor: '#007AFF',
-  borderRadius: 8,
+   width: 70,           // Match completed button
+  height: 70,          // Match completed button
+  borderRadius: 35, 
+  justifyContent: 'center',
+  alignItems: 'center',
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 4 },
+  shadowOpacity: 0.3,
+  shadowRadius: 6,
+  elevation: 8,  // For Android
 },
 newButtonText: {
-  fontSize: 17,
+  fontSize: 38,
   color: 'white',
-  fontWeight: '600',
+  fontWeight: '300',  // Thin plus sign
+  lineHeight: 38
 },
 completedButton: {
   position: 'absolute',
   bottom: 30,
   left: 30,
   backgroundColor: '#34C759',
-  width: 60,
-  height: 60,
-  borderRadius: 30,
+  width: 70,
+  height: 70,
+  borderRadius: 35,
   justifyContent: 'center',
   alignItems: 'center',
+   shadowColor: '#000',  // Add shadow
+  shadowOffset: { width: 0, height: 4 },
+  shadowOpacity: 0.3,
+  shadowRadius: 6,
+  elevation: 8,
 },
 completedButtonText: {
   color: 'white',
   fontSize: 18,
   fontWeight: 'bold',
+},
+outerContainer: {
+  flex: 1,
+  backgroundColor: '#FAF8F5',  // This fills EVERYTHING
 },
   headerTitle: {
     fontSize: 40,

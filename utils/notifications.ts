@@ -3,7 +3,6 @@ import * as Notifications from 'expo-notifications';
 // Configure how notifications appear
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: false,
     shouldShowBanner: true,
@@ -42,9 +41,9 @@ export async function scheduleNotification(
       data: { todoId },
     },
     trigger: {
-      type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,  // ADD THIS
+        type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
       seconds: secondsFromNow,
-      repeats: false,  // ADD THIS
+        repeats: false,
     },
   });
   
