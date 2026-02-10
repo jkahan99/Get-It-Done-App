@@ -1,4 +1,9 @@
+import { Inter_700Bold } from '@expo-google-fonts/inter';
+import { Montserrat_700Bold } from '@expo-google-fonts/montserrat';
+import { Poppins_700Bold } from '@expo-google-fonts/poppins';
+import { Raleway_700Bold } from '@expo-google-fonts/raleway';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFonts } from 'expo-font';
 import * as Haptics from 'expo-haptics';
 import React, { useEffect, useState } from 'react';
 import { Animated, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -11,6 +16,12 @@ import { cancelNotification, requestNotificationPermissions, scheduleNotificatio
 export default function TodoList() {
 
 //make an array of ToDo items
+const [fontsLoaded] = useFonts({
+    Inter_700Bold,
+    Poppins_700Bold,
+    Raleway_700Bold,
+    Montserrat_700Bold,
+  });
 const [todos, setTodos] = useState<Todo[]>([]);
 const [modalVisible, setModalVisible] = useState(false);  // Add this
 const [todoText, setTodoText] = useState('');  
@@ -226,7 +237,7 @@ return (
     <View style={styles.container}>
       {/* HEADER */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>SimpleTODO</Text>
+        <Text style={styles.headerTitle}>Get It Done</Text>
       </View>
 
       {/* TODO LIST */}
@@ -253,9 +264,9 @@ return (
         )}
         ListEmptyComponent={
           <View style={styles.emptyState}>
-            <Text style={styles.emptyIcon}>✨</Text>
+            <Text style={styles.emptyIcon}>🔥</Text>
             <Text style={styles.emptyTitle}>All clear!</Text>
-            <Text style={styles.emptyText}>Tap "New" to add a task</Text>
+            <Text style={styles.emptyText}>Tap + and get it done!</Text>
           </View>
         }
       />
@@ -333,15 +344,13 @@ const styles = StyleSheet.create({
     color: 'blue',
     fontSize: 40,  // This is how you change text size
   },
-  header: {
-    flexDirection: 'row',           // Makes items go left-to-right
-    justifyContent: 'space-between', // Pushes title left, button right
-    alignItems: 'center',            // Vertically centers items
-    paddingHorizontal: 20,           // Space on left and right
-    paddingTop: 40,                  // Space from top (for status bar)
-    paddingBottom: 20,
-  backgroundColor: '#FAF8F5',  // Add this - warm cream
-  },
+ header: {
+  alignItems: 'center',  // Center everything
+  paddingHorizontal: 20,
+  paddingTop: 30,
+  paddingBottom: 20,
+  backgroundColor: '#FAF8F5',
+},
 circle: {
   width: 24,
   height: 24,
@@ -492,9 +501,11 @@ outerContainer: {
   backgroundColor: '#FAF8F5',  // This fills EVERYTHING
 },
   headerTitle: {
-    fontSize: 40,
-    fontWeight: 'bold',
-  },
+  fontSize: 44,
+  fontFamily: 'Raleway_700Bold',  // Use the custom font
+  letterSpacing: -1,  // Tighter spacing (more modern)
+  textAlign: 'center',
+},
   circleCompleted: {
   width: 24,
   height: 24,

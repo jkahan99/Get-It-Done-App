@@ -1,3 +1,5 @@
+import { Inter_700Bold } from '@expo-google-fonts/inter';
+import { useFonts } from 'expo-font';
 import React from 'react';
 import { Animated, FlatList, Modal, PanResponder, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Todo } from '../types/Todo';
@@ -13,6 +15,9 @@ type CompletedModalProps = {
 };
 
 export default function CompletedModal({ visible, completedTodos, onClose, onToggle, onDelete, onEdit }: CompletedModalProps) {
+  const [fontsLoaded] = useFonts({
+    Inter_700Bold, // match your main font
+  });
   const translateX = React.useRef(new Animated.Value(0)).current;
 
   const panResponder = React.useRef(
@@ -100,14 +105,16 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingTop: 40,
+    paddingTop: 75,
     paddingBottom: 20,
     backgroundColor: 'FAF8F5',
   },
   headerTitle: {
-    fontSize: 40,
-    fontWeight: 'bold',
-  },
+  fontSize: 44,  // Match main screen
+  fontFamily: 'Raleway_700Bold',  // Use same font
+  letterSpacing: -1,
+  textAlign: 'center',
+},
   newButton: {
     paddingHorizontal: 16,
     paddingVertical: 8,

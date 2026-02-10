@@ -4,9 +4,8 @@
     "slug": "SimpleTODO",
     "version": "1.0.0",
     "orientation": "portrait",
-        "backgroundColor": "#FAF8F5",  // ADD THIS LINE
-
-    "icon": "./assets/images/icon.png",
+    "backgroundColor": "#FAF8F5",
+    "icon": "./assets/images/GETITDONEICON.png",
     "scheme": "simpletodo",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -40,7 +39,8 @@
             "backgroundColor": "#000000"
           }
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true,
