@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { KeyboardAvoidingView, Modal, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 type AddTodoModalProps = {
   visible: boolean;
@@ -14,12 +14,18 @@ export default function AddTodoModal({ visible, todoText, onChangeText, onAdd, o
     <Modal
       visible={visible}
       transparent={true}
-      animationType="slide"
+      animationType="fade"
       onRequestClose={onCancel}
+    >
+      <KeyboardAvoidingView 
+    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    style={{ flex: 1 }}
     >
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
           <Text style={styles.modalTitle}>New Task</Text>
+
+          
           
           <TextInput
             style={styles.modalInput}
@@ -46,6 +52,7 @@ export default function AddTodoModal({ visible, todoText, onChangeText, onAdd, o
           </View>
         </View>
       </View>
+    </KeyboardAvoidingView>
     </Modal>
   );
 }

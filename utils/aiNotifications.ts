@@ -1,15 +1,9 @@
 const WORKER_URL = 'https://simpletodo-ai.jkahan2.workers.dev';
 
 export async function generateWittyNotification(todoTitle: string): Promise<string> {
-  // Basic content filter
-  const bannedWords = ['rape', 'kill', 'suicide', 'abuse', 'harm'];
-  const lowerTitle = todoTitle.toLowerCase();
-  
-  if (bannedWords.some(word => lowerTitle.includes(word))) {
-    return `Don't forget: ${todoTitle}!`;
-  }
-  
   try {
+    console.log('Generating notification for:', todoTitle);
+    
     const response = await fetch(WORKER_URL, {
       method: 'POST',
       headers: {
@@ -19,11 +13,35 @@ export async function generateWittyNotification(todoTitle: string): Promise<stri
     });
 
     if (!response.ok) {
+      console.error('HTTP error! status:', response.status);
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const data = await response.json();
-    return data.message;
+    const message = data.message;
+    
+    console.log('AI message for "' + todoTitle + '":', message);
+    
+    // Check if Claude refused
+    const refusalPhrases = [
+      "i can't",
+      "i'm unable",
+      "i cannot",
+      "i'd be happy to help you create",
+      "instead"
+    ];
+    
+    const isRefusal = refusalPhrases.some(phrase => 
+      message.toLowerCase().includes(phrase)
+    );
+    
+    if (isRefusal) {
+      console.log('Claude refused, using fallback for:', todoTitle);
+      return `Don't forget: ${todoTitle}!`;
+    }
+    
+    console.log('Successfully generated AI notification');
+    return message;
     
   } catch (error) {
     console.error('AI generation failed:', error);

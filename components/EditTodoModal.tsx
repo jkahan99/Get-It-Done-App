@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { KeyboardAvoidingView, Modal, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 type EditTodoModalProps = {
   visible: boolean;
@@ -14,10 +14,14 @@ export default function EditTodoModal({ visible, editText, onChangeText, onSave,
     <Modal
       visible={visible}
       transparent={true}
-      animationType="slide"
+      animationType="fade"
       onRequestClose={onCancel}
     >
-      <View style={styles.modalOverlay}>
+      <KeyboardAvoidingView 
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={{ flex: 1 }}
+          >
+                  <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
           <Text style={styles.modalTitle}>Edit Task</Text>
           
@@ -45,6 +49,7 @@ export default function EditTodoModal({ visible, editText, onChangeText, onSave,
           </View>
         </View>
       </View>
+     </KeyboardAvoidingView>
     </Modal>
   );
 }
