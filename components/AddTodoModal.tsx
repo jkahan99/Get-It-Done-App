@@ -32,8 +32,8 @@ export default function AddTodoModal({ visible, todoText, onChangeText, onAdd, o
             placeholder="What do you want to do?"
             value={todoText}
             onChangeText={onChangeText}
-            autoFocus={true}  // ADD THIS LINE
-            onSubmitEditing={onAdd}  // ADD THIS
+            autoFocus={true}
+            onSubmitEditing={onAdd}
             returnKeyType="done"
 
           />
@@ -46,7 +46,11 @@ export default function AddTodoModal({ visible, todoText, onChangeText, onAdd, o
     <Text style={styles.modalButtonText}>Cancel</Text>
   </TouchableOpacity>
   
-  <TouchableOpacity style={styles.modalButton} onPress={onAdd}>
+  <TouchableOpacity
+    style={[styles.modalButton, !todoText.trim() && styles.disabledButton]}
+    onPress={onAdd}
+    disabled={!todoText.trim()}
+  >
     <Text style={styles.modalButtonText}>Add</Text>
   </TouchableOpacity>
 </View>
@@ -97,6 +101,9 @@ const styles = StyleSheet.create({
   },
   cancelButton: {
     backgroundColor: '#8e8e93',
+  },
+  disabledButton: {
+    backgroundColor: '#c7c7cc',
   },
   modalButtonText: {
     color: 'white',

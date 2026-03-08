@@ -30,8 +30,8 @@ export default function EditTodoModal({ visible, editText, onChangeText, onSave,
             placeholder="Task name"
             value={editText}
             onChangeText={onChangeText}
-            autoFocus={true}  // ADD THIS LINE
-            onSubmitEditing={onSave}  // ADD THIS
+            autoFocus={true}  
+            onSubmitEditing={onSave}  
             returnKeyType="done"
           />
           

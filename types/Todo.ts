@@ -3,6 +3,6 @@ export type Todo = {
   title: string;
   completed: boolean;
    notificationId?: string;
-     notificationIds?: string[];  // ADD THIS LINE
+     notificationIds?: string[];
 
 };

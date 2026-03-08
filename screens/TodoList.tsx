@@ -26,7 +26,7 @@ const [todos, setTodos] = useState<Todo[]>([]);
 const [modalVisible, setModalVisible] = useState(false);  // Add this
 const [todoText, setTodoText] = useState('');  
 const [showCompleted, setShowCompleted] = useState(false);
-const [editingId, setEditingId] = useState<number | null>(null);  // ADD THIS
+const [editingId, setEditingId] = useState<number | null>(null);
 const [editText, setEditText] = useState('');            
 const [justCompleted, setJustCompleted] = useState<number | null>(null);
 useEffect(() => {
@@ -370,7 +370,7 @@ modalOverlay: {
 todoRow: {
   flexDirection: 'row',
   alignItems: 'center',
-  backgroundColor: '#FAF8F5',  // Change from 'white' to match background
+  backgroundColor: '#FAF8F5',
   paddingVertical: 14,
   paddingHorizontal: 20,
   borderBottomWidth: 1,
@@ -391,7 +391,6 @@ emptyTitle: {
   color: '#000',
   marginBottom: 8,
 },
-// Keep your existing emptyText but update it:
 emptyText: {
   textAlign: 'center',
   color: '#8e8e93',
