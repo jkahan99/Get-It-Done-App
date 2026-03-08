@@ -36,17 +36,17 @@ export default function EditTodoModal({ visible, editText, onChangeText, onSave,
           />
           
           <View style={styles.modalButtons}>
-            <TouchableOpacity style={styles.modalButton} onPress={onSave}>
-              <Text style={styles.modalButtonText}>Save</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity 
-              style={[styles.modalButton, styles.cancelButton]}
-              onPress={onCancel}
-            >
-              <Text style={styles.modalButtonText}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
+  <TouchableOpacity 
+    style={[styles.modalButton, styles.cancelButton]}
+    onPress={onCancel}
+  >
+    <Text style={styles.modalButtonText}>Cancel</Text>
+  </TouchableOpacity>
+  
+  <TouchableOpacity style={styles.modalButton} onPress={onSave}>
+    <Text style={styles.modalButtonText}>Add</Text>
+  </TouchableOpacity>
+</View>
         </View>
       </View>
      </KeyboardAvoidingView>
@@ -57,7 +57,7 @@ export default function EditTodoModal({ visible, editText, onChangeText, onSave,
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0,0,0,0.15)',
     justifyContent: 'center',
     alignItems: 'center',
   },

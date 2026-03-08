@@ -39,17 +39,17 @@ export default function AddTodoModal({ visible, todoText, onChangeText, onAdd, o
           />
           
           <View style={styles.modalButtons}>
-            <TouchableOpacity style={styles.modalButton} onPress={onAdd}>
-              <Text style={styles.modalButtonText}>Add</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity 
-              style={[styles.modalButton, styles.cancelButton]}
-              onPress={onCancel}
-            >
-              <Text style={styles.modalButtonText}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
+  <TouchableOpacity 
+    style={[styles.modalButton, styles.cancelButton]}
+    onPress={onCancel}
+  >
+    <Text style={styles.modalButtonText}>Cancel</Text>
+  </TouchableOpacity>
+  
+  <TouchableOpacity style={styles.modalButton} onPress={onAdd}>
+    <Text style={styles.modalButtonText}>Add</Text>
+  </TouchableOpacity>
+</View>
         </View>
       </View>
     </KeyboardAvoidingView>
@@ -60,7 +60,7 @@ export default function AddTodoModal({ visible, todoText, onChangeText, onAdd, o
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0,0,0,0.15)',
     justifyContent: 'center',
     alignItems: 'center',
   },
