@@ -64,7 +64,7 @@ const addTodo = async (title: string) => {
   const message1w = `Final reminder: ${baseMessage} `;     // 1 week: guilt trip
 
   // Schedule 3 notifications with different messages
-  const notificationId1h = await scheduleNotification(newTodo.id, message1h, 2);
+  const notificationId1h = await scheduleNotification(newTodo.id, message1h, 3600);
   const notificationId23h = await scheduleNotification(newTodo.id, message23h, 82800);
   const notificationId1w = await scheduleNotification(newTodo.id, message1w, 604800);
  
