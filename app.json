@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "SimpleTODO",
-    "slug": "SimpleTODO",
+    "name": "Get It Done",
+    "slug": "GetItDone",
     "version": "1.0.0",
     "orientation": "portrait",
     "backgroundColor": "#FAF8F5",
@@ -11,11 +11,15 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.jkahan.simpletodo",  
-      "buildNumber": "1",                          
-      "infoPlist": {                                
-        "UIBackgroundModes": ["remote-notification"],
-        "NSUserTrackingUsageDescription": "We don't track you."
+      "bundleIdentifier": "com.jkahan.simpletodo",
+      "buildNumber": "1",
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "remote-notification",
+          "remote-notification"
+        ],
+        "NSUserTrackingUsageDescription": "We don't track you.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -48,7 +52,7 @@
         }
       ],
       "expo-font",
-      [                                             
+      [
         "expo-notifications",
         {
           "icon": "./assets/images/notification-icon.png",
@@ -59,6 +63,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "d6ddabf7-673b-4402-97b7-0b2e54bbbbfc"
+      }
     }
   }
 }
