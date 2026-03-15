@@ -10,7 +10,7 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "bundleIdentifier": "com.jkahan.simpletodo",
       "buildNumber": "1",
       "infoPlist": {
@@ -18,7 +18,6 @@
           "remote-notification",
           "remote-notification"
         ],
-        "NSUserTrackingUsageDescription": "We don't track you.",
         "ITSAppUsesNonExemptEncryption": false
       }
     },
