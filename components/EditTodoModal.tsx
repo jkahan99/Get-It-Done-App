@@ -44,7 +44,7 @@ export default function EditTodoModal({ visible, editText, onChangeText, onSave,
   </TouchableOpacity>
   
   <TouchableOpacity style={styles.modalButton} onPress={onSave}>
-    <Text style={styles.modalButtonText}>Add</Text>
+    <Text style={styles.modalButtonText}>Save</Text>
   </TouchableOpacity>
 </View>
         </View>
