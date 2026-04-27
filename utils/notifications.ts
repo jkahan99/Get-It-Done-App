@@ -36,7 +36,7 @@ export async function scheduleNotification(
 ): Promise<string> {
   const notificationId = await Notifications.scheduleNotificationAsync({
     content: {
-      title: 'SimpleTODO',
+      title: 'Get It Done',
       body: message,
       data: { todoId },
     },

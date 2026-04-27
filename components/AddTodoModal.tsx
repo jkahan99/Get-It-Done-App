@@ -1,5 +1,6 @@
 import React from 'react';
 import { KeyboardAvoidingView, Modal, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Colors } from '../constants/theme';
 
 type AddTodoModalProps = {
   visible: boolean;
@@ -17,7 +18,7 @@ export default function AddTodoModal({ visible, todoText, onChangeText, onAdd, o
       animationType="fade"
       onRequestClose={onCancel}
     >
-      <KeyboardAvoidingView 
+      <KeyboardAvoidingView
     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     style={{ flex: 1 }}
     >
@@ -25,8 +26,6 @@ export default function AddTodoModal({ visible, todoText, onChangeText, onAdd, o
         <View style={styles.modalContent}>
           <Text style={styles.modalTitle}>New Task</Text>
 
-          
-          
           <TextInput
             style={styles.modalInput}
             placeholder="What do you want to do?"
@@ -35,17 +34,16 @@ export default function AddTodoModal({ visible, todoText, onChangeText, onAdd, o
             autoFocus={true}
             onSubmitEditing={onAdd}
             returnKeyType="done"
-
           />
-          
+
           <View style={styles.modalButtons}>
-  <TouchableOpacity 
+  <TouchableOpacity
     style={[styles.modalButton, styles.cancelButton]}
     onPress={onCancel}
   >
     <Text style={styles.modalButtonText}>Cancel</Text>
   </TouchableOpacity>
-  
+
   <TouchableOpacity
     style={[styles.modalButton, !todoText.trim() && styles.disabledButton]}
     onPress={onAdd}
@@ -94,7 +92,7 @@ const styles = StyleSheet.create({
   },
   modalButton: {
     flex: 1,
-    backgroundColor: '#007AFF',
+    backgroundColor: Colors.primary,
     padding: 12,
     borderRadius: 8,
     alignItems: 'center',

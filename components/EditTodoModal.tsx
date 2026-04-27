@@ -1,5 +1,6 @@
 import React from 'react';
 import { KeyboardAvoidingView, Modal, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Colors } from '../constants/theme';
 
 type EditTodoModalProps = {
   visible: boolean;
@@ -17,32 +18,32 @@ export default function EditTodoModal({ visible, editText, onChangeText, onSave,
       animationType="fade"
       onRequestClose={onCancel}
     >
-      <KeyboardAvoidingView 
+      <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={{ flex: 1 }}
           >
                   <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
           <Text style={styles.modalTitle}>Edit Task</Text>
-          
+
           <TextInput
             style={styles.modalInput}
             placeholder="Task name"
             value={editText}
             onChangeText={onChangeText}
-            autoFocus={true}  
-            onSubmitEditing={onSave}  
+            autoFocus={true}
+            onSubmitEditing={onSave}
             returnKeyType="done"
           />
-          
+
           <View style={styles.modalButtons}>
-  <TouchableOpacity 
+  <TouchableOpacity
     style={[styles.modalButton, styles.cancelButton]}
     onPress={onCancel}
   >
     <Text style={styles.modalButtonText}>Cancel</Text>
   </TouchableOpacity>
-  
+
   <TouchableOpacity style={styles.modalButton} onPress={onSave}>
     <Text style={styles.modalButtonText}>Save</Text>
   </TouchableOpacity>
@@ -87,7 +88,7 @@ const styles = StyleSheet.create({
   },
   modalButton: {
     flex: 1,
-    backgroundColor: '#007AFF',
+    backgroundColor: Colors.primary,
     padding: 12,
     borderRadius: 8,
     alignItems: 'center',
