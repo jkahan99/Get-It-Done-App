@@ -1,7 +1,6 @@
-import { Inter_700Bold } from '@expo-google-fonts/inter';
-import { useFonts } from 'expo-font';
 import React from 'react';
-import { Animated, FlatList, Modal, PanResponder, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, FlatList, Modal, PanResponder, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Colors, Spacing, Typography } from '../constants/theme';
 import { Todo } from '../types/Todo';
 import TodoItem from './TodoItem';
 
@@ -15,9 +14,6 @@ type CompletedModalProps = {
 };
 
 export default function CompletedModal({ visible, completedTodos, onClose, onToggle, onDelete, onEdit }: CompletedModalProps) {
-  const [fontsLoaded] = useFonts({
-    Inter_700Bold, // match your main font
-  });
   const translateX = React.useRef(new Animated.Value(0)).current;
 
   const panResponder = React.useRef(
@@ -60,25 +56,30 @@ export default function CompletedModal({ visible, completedTodos, onClose, onTog
       animationType="slide"
       onRequestClose={onClose}
     >
-      <Animated.View 
-        style={[
-          styles.container,
-          { transform: [{ translateX }] }
-        ]}
+      <Animated.View
+        style={[styles.container, { transform: [{ translateX }] }]}
         {...panResponder.panHandlers}
       >
         <View style={styles.header}>
+          {/* Left spacer mirrors the close icon width to keep title centered */}
+          <View style={styles.spacer} />
+
           <Text style={styles.headerTitle}>Completed</Text>
-          <TouchableOpacity style={styles.newButton} onPress={onClose}>
-            <Text style={styles.newButtonText}>Done</Text>
-          </TouchableOpacity>
+
+          <Pressable
+            style={({ pressed }) => [styles.doneButton, pressed && { opacity: 0.8 }]}
+            onPress={onClose}
+          >
+            <Text style={styles.doneButtonText}>Done</Text>
+          </Pressable>
         </View>
-        
+
         <FlatList
           data={completedTodos}
           keyExtractor={(item) => item.id.toString()}
+          contentContainerStyle={styles.listContent}
           renderItem={({ item }) => (
-            <TodoItem 
+            <TodoItem
               item={item}
               onToggle={onToggle}
               onDelete={onDelete}
@@ -98,38 +99,56 @@ export default function CompletedModal({ visible, completedTodos, onClose, onTog
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FAF8F5',
+    backgroundColor: Colors.background,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: Spacing.xl,   // 20
     paddingTop: 75,
-    paddingBottom: 20,
-    backgroundColor: '#FAF8F5',
+    paddingBottom: Spacing.xl,       // 20
+    backgroundColor: Colors.background,
+  },
+  spacer: {
+    width: 72,                       // mirrors doneButton width
   },
   headerTitle: {
-  fontSize: 44,  // Match main screen
-  fontFamily: 'Raleway_700Bold',  // Use same font
-  letterSpacing: -1,
-  textAlign: 'center',
-},
-  newButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    backgroundColor: '#007AFF',
-    borderRadius: 8,
+    flex: 1,
+    fontSize: Typography.size.display,               // 34
+    fontWeight: Typography.weight.heavy,             // '800'
+    fontFamily: Typography.fontFamily,
+    letterSpacing: Typography.letterSpacing.display, // -0.5
+    color: Colors.textPrimary,
+    textAlign: 'center',
   },
-  newButtonText: {
-    fontSize: 17,
-    color: 'white',
-    fontWeight: '600',
+  doneButton: {
+    width: 72,
+    backgroundColor: Colors.surface,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    borderRadius: 999,
+    paddingVertical: Spacing.sm,     // 8
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  doneButtonText: {
+    fontSize: Typography.size.body,           // 15
+    fontWeight: Typography.weight.semibold,   // '600'
+    fontFamily: Typography.fontFamily,
+    color: Colors.textPrimary,
+  },
+  listContent: {
+    paddingHorizontal: Spacing.xl,   // 20
   },
   emptyText: {
     textAlign: 'center',
-    color: '#8e8e93',
-    fontSize: 17,
+    color: Colors.textTertiary,
+    fontSize: Typography.size.body,  // 15
     marginTop: 50,
   },
 });
