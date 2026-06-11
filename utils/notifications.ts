@@ -28,12 +28,14 @@ export async function requestNotificationPermissions(): Promise<boolean> {
   return true;
 }
 
-// Schedule a notification
+// Schedule a notification at a specific date
 export async function scheduleNotification(
   todoId: number,
   message: string,
-  secondsFromNow: number
+  date: Date
 ): Promise<string> {
+  const secondsFromNow = Math.max(1, Math.round((date.getTime() - Date.now()) / 1000));
+
   const notificationId = await Notifications.scheduleNotificationAsync({
     content: {
       title: 'Get It Done',
@@ -41,12 +43,12 @@ export async function scheduleNotification(
       data: { todoId },
     },
     trigger: {
-        type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+      type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
       seconds: secondsFromNow,
-        repeats: false,
+      repeats: false,
     },
   });
-  
+
   return notificationId;
 }
 

@@ -23,6 +23,8 @@ const [showCompleted, setShowCompleted] = useState(false);
 const [editingId, setEditingId] = useState<number | null>(null);
 const [editText, setEditText] = useState('');
 const [justCompleted, setJustCompleted] = useState<number | null>(null);
+const [newNotificationDate, setNewNotificationDate] = useState<Date | null>(null);
+const [editNotificationDate, setEditNotificationDate] = useState<Date | null>(null);
 
 useEffect(() => {
   loadTodos();
@@ -36,7 +38,7 @@ useEffect(() => {
   requestNotificationPermissions();
 }, []);
 
-const addTodo = async (title: string) => {
+const addTodo = async (title: string, notificationDate: Date | null) => {
   Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
   const newTodo: Todo = {
@@ -45,28 +47,17 @@ const addTodo = async (title: string) => {
     completed: false,
   };
 
-  // Add to state IMMEDIATELY (user sees it right away)
-  setTodos([...todos, newTodo]);
+  setTodos(prev => [...prev, newTodo]);
 
-  // THEN do the slow AI stuff in background
-  const baseMessage = await generateWittyNotification(title);
-  console.log('AI message for "' + title + '":', baseMessage);
+  if (!notificationDate) return;
 
-  // Create variations programmatically (no extra cost!)
-  const message1h = baseMessage;
-  const message23h = baseMessage;
-  const message1w = `Final reminder: ${baseMessage} `;
+  const message = await generateWittyNotification(title);
+  const nId = await scheduleNotification(newTodo.id, message, notificationDate);
 
-  // Schedule 3 notifications with different messages
-  const notificationId1h = await scheduleNotification(newTodo.id, message1h, 3600);
-  const notificationId23h = await scheduleNotification(newTodo.id, message23h, 82800);
-  const notificationId1w = await scheduleNotification(newTodo.id, message1w, 604800);
-
-  // Update the todo with notification IDs
-  setTodos(prevTodos => prevTodos.map(todo =>
-    todo.id === newTodo.id
-      ? { ...todo, notificationIds: [notificationId1h, notificationId23h, notificationId1w] }
-      : todo
+  setTodos(prev => prev.map(t =>
+    t.id === newTodo.id
+      ? { ...t, notificationIds: [nId], notificationDate: notificationDate.toISOString() }
+      : t
   ));
 };
 
@@ -78,8 +69,7 @@ const toggleComplete = (id: number) => {
     setJustCompleted(id);
 
     if (todo.notificationIds) {
-      todo.notificationIds.forEach(id => cancelNotification(id));
-      console.log('All 3 notifications cancelled!');
+      todo.notificationIds.forEach(nId => cancelNotification(nId));
     }
     setTimeout(() => {
       setTodos(todos.map(todo => {
@@ -110,19 +100,34 @@ const deleteTodo = (id: number) => {
   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   const todo = todos.find(t => t.id === id);
   if (todo?.notificationIds) {
-    todo.notificationIds.forEach(id => cancelNotification(id));
-    console.log('All 3 notifications cancelled!');
+    todo.notificationIds.forEach(nId => cancelNotification(nId));
   }
   setTodos(todos.filter(todo => todo.id !== id));
 };
 
-const editTodo = (id: number, newTitle: string) => {
-  setTodos(todos.map(todo => {
-    if (todo.id === id) {
-      return { ...todo, title: newTitle };
-    }
-    return todo;
-  }));
+const editTodo = async (id: number, newTitle: string, notificationDate: Date | null) => {
+  setTodos(prev => prev.map(t => t.id === id ? { ...t, title: newTitle } : t));
+
+  const existing = todos.find(t => t.id === id);
+  if (existing?.notificationIds) {
+    existing.notificationIds.forEach(nId => cancelNotification(nId));
+  }
+
+  let notificationIds: string[] = [];
+  let notificationDateStr: string | undefined;
+
+  if (notificationDate) {
+    const message = await generateWittyNotification(newTitle);
+    const nId = await scheduleNotification(id, message, notificationDate);
+    notificationIds = [nId];
+    notificationDateStr = notificationDate.toISOString();
+  }
+
+  setTodos(prev => prev.map(t =>
+    t.id === id
+      ? { ...t, notificationIds, notificationDate: notificationDateStr }
+      : t
+  ));
 };
 
 const openEditModal = (id: number) => {
@@ -131,6 +136,9 @@ const openEditModal = (id: number) => {
     setEditText(todoToEdit.title);
     setEditingId(id);
     setShowCompleted(false);
+    setEditNotificationDate(
+      todoToEdit.notificationDate ? new Date(todoToEdit.notificationDate) : null
+    );
   }
 };
 
@@ -214,14 +222,21 @@ return (
       visible={modalVisible}
       todoText={todoText}
       onChangeText={setTodoText}
+      notificationDate={newNotificationDate}
+      onNotificationChange={setNewNotificationDate}
       onAdd={() => {
         if (todoText.trim() !== '') {
-          addTodo(todoText);
+          addTodo(todoText, newNotificationDate);
           setModalVisible(false);
           setTodoText('');
+          setNewNotificationDate(null);
         }
       }}
-      onCancel={() => { setModalVisible(false); setTodoText(''); }}
+      onCancel={() => {
+        setModalVisible(false);
+        setTodoText('');
+        setNewNotificationDate(null);
+      }}
     />
 
     <CompletedModal
@@ -237,16 +252,20 @@ return (
       visible={editingId !== null}
       editText={editText}
       onChangeText={setEditText}
+      notificationDate={editNotificationDate}
+      onNotificationChange={setEditNotificationDate}
       onSave={() => {
         if (editText.trim() !== '' && editingId !== null) {
-          editTodo(editingId, editText);
+          editTodo(editingId, editText, editNotificationDate);
           setEditingId(null);
           setEditText('');
+          setEditNotificationDate(null);
         }
       }}
       onCancel={() => {
         setEditingId(null);
         setEditText('');
+        setEditNotificationDate(null);
       }}
     />
   </View>

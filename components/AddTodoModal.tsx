@@ -1,6 +1,7 @@
 import React from 'react';
 import { KeyboardAvoidingView, Modal, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Colors } from '../constants/theme';
+import NotificationPicker from './NotificationPicker';
 
 type AddTodoModalProps = {
   visible: boolean;
@@ -8,9 +9,19 @@ type AddTodoModalProps = {
   onChangeText: (text: string) => void;
   onAdd: () => void;
   onCancel: () => void;
+  notificationDate: Date | null;
+  onNotificationChange: (date: Date | null) => void;
 };
 
-export default function AddTodoModal({ visible, todoText, onChangeText, onAdd, onCancel }: AddTodoModalProps) {
+export default function AddTodoModal({
+  visible,
+  todoText,
+  onChangeText,
+  onAdd,
+  onCancel,
+  notificationDate,
+  onNotificationChange,
+}: AddTodoModalProps) {
   return (
     <Modal
       visible={visible}
@@ -19,42 +30,47 @@ export default function AddTodoModal({ visible, todoText, onChangeText, onAdd, o
       onRequestClose={onCancel}
     >
       <KeyboardAvoidingView
-    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    style={{ flex: 1 }}
-    >
-      <View style={styles.modalOverlay}>
-        <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>New Task</Text>
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>New Task</Text>
 
-          <TextInput
-            style={styles.modalInput}
-            placeholder="What do you want to do?"
-            value={todoText}
-            onChangeText={onChangeText}
-            autoFocus={true}
-            onSubmitEditing={onAdd}
-            returnKeyType="done"
-          />
+            <TextInput
+              style={styles.modalInput}
+              placeholder="What do you want to do?"
+              value={todoText}
+              onChangeText={onChangeText}
+              autoFocus={true}
+              onSubmitEditing={onAdd}
+              returnKeyType="done"
+            />
 
-          <View style={styles.modalButtons}>
-  <TouchableOpacity
-    style={[styles.modalButton, styles.cancelButton]}
-    onPress={onCancel}
-  >
-    <Text style={styles.modalButtonText}>Cancel</Text>
-  </TouchableOpacity>
+            <NotificationPicker
+              selected={notificationDate}
+              onSelect={onNotificationChange}
+            />
 
-  <TouchableOpacity
-    style={[styles.modalButton, !todoText.trim() && styles.disabledButton]}
-    onPress={onAdd}
-    disabled={!todoText.trim()}
-  >
-    <Text style={styles.modalButtonText}>Add</Text>
-  </TouchableOpacity>
-</View>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.cancelButton]}
+                onPress={onCancel}
+              >
+                <Text style={styles.modalButtonText}>Cancel</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.modalButton, !todoText.trim() && styles.disabledButton]}
+                onPress={onAdd}
+                disabled={!todoText.trim()}
+              >
+                <Text style={styles.modalButtonText}>Add</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
-      </View>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }

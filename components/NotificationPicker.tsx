@@ -1,49 +1,90 @@
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Colors, Spacing, Typography } from '../constants/theme';
 
-type Option = { label: string; seconds: number | null; icon: string };
-
-const OPTIONS: Option[] = [
-  { label: 'None', seconds: null, icon: 'notifications-off-outline' },
-  { label: '1 hr', seconds: 3600, icon: 'time-outline' },
-  { label: '3 hrs', seconds: 10800, icon: 'time-outline' },
-  { label: 'Tomorrow', seconds: 86400, icon: 'sunny-outline' },
-  { label: '1 week', seconds: 604800, icon: 'calendar-outline' },
-];
+type ChipId = '1hr' | '1day' | 'other';
 
 type NotificationPickerProps = {
-  selected: number | null;
-  onSelect: (seconds: number | null) => void;
+  selected: Date | null;
+  onSelect: (date: Date | null) => void;
 };
 
+const CHIPS: { id: ChipId; label: string; icon: string }[] = [
+  { id: '1hr', label: '1 hr', icon: 'time-outline' },
+  { id: '1day', label: '1 day', icon: 'sunny-outline' },
+  { id: 'other', label: 'Other', icon: 'calendar-outline' },
+];
+
+const TOLERANCE_MS = 5 * 60 * 1000; // 5-minute window to match a preset chip
+
+function getActiveChip(date: Date | null): ChipId | null {
+  if (!date) return null;
+  const ms = date.getTime() - Date.now();
+  if (Math.abs(ms - 3_600_000) < TOLERANCE_MS) return '1hr';
+  if (Math.abs(ms - 86_400_000) < TOLERANCE_MS) return '1day';
+  return 'other';
+}
+
 export default function NotificationPicker({ selected, onSelect }: NotificationPickerProps) {
+  const activeChip = getActiveChip(selected);
+
+  const handleChipPress = (id: ChipId) => {
+    if (activeChip === id) {
+      onSelect(null);
+      return;
+    }
+    if (id === '1hr') {
+      onSelect(new Date(Date.now() + 3_600_000));
+    } else if (id === '1day') {
+      onSelect(new Date(Date.now() + 86_400_000));
+    } else {
+      onSelect(new Date(Date.now() + 2 * 3_600_000));
+    }
+  };
+
+  const handleDateChange = (_event: DateTimePickerEvent, date?: Date) => {
+    if (date) onSelect(date);
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Remind me</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.row}>
-        {OPTIONS.map((opt) => {
-          const isSelected = selected === opt.seconds;
+      <View style={styles.row}>
+        {CHIPS.map(({ id, label, icon }) => {
+          const isSelected = activeChip === id;
           return (
             <TouchableOpacity
-              key={opt.label}
+              key={id}
               style={[styles.chip, isSelected && styles.chipSelected]}
-              onPress={() => onSelect(opt.seconds)}
+              onPress={() => handleChipPress(id)}
               activeOpacity={0.7}
             >
               <Ionicons
-                name={opt.icon as any}
+                name={icon as any}
                 size={13}
                 color={isSelected ? Colors.surface : Colors.textSecondary}
               />
               <Text style={[styles.chipText, isSelected && styles.chipTextSelected]}>
-                {opt.label}
+                {label}
               </Text>
             </TouchableOpacity>
           );
         })}
-      </ScrollView>
+      </View>
+
+      {activeChip === 'other' && selected && (
+        <View style={styles.datePickerRow}>
+          <DateTimePicker
+            value={selected}
+            mode="datetime"
+            display={Platform.OS === 'ios' ? 'compact' : 'default'}
+            onChange={handleDateChange}
+            minimumDate={new Date()}
+          />
+        </View>
+      )}
     </View>
   );
 }
@@ -86,5 +127,9 @@ const styles = StyleSheet.create({
   },
   chipTextSelected: {
     color: Colors.surface,
+  },
+  datePickerRow: {
+    marginTop: Spacing.sm,
+    alignItems: 'flex-start',
   },
 });

@@ -1,6 +1,7 @@
 import React from 'react';
 import { KeyboardAvoidingView, Modal, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Colors } from '../constants/theme';
+import NotificationPicker from './NotificationPicker';
 
 type EditTodoModalProps = {
   visible: boolean;
@@ -8,9 +9,19 @@ type EditTodoModalProps = {
   onChangeText: (text: string) => void;
   onSave: () => void;
   onCancel: () => void;
+  notificationDate: Date | null;
+  onNotificationChange: (date: Date | null) => void;
 };
 
-export default function EditTodoModal({ visible, editText, onChangeText, onSave, onCancel }: EditTodoModalProps) {
+export default function EditTodoModal({
+  visible,
+  editText,
+  onChangeText,
+  onSave,
+  onCancel,
+  notificationDate,
+  onNotificationChange,
+}: EditTodoModalProps) {
   return (
     <Modal
       visible={visible}
@@ -19,38 +30,43 @@ export default function EditTodoModal({ visible, editText, onChangeText, onSave,
       onRequestClose={onCancel}
     >
       <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={{ flex: 1 }}
-          >
-                  <View style={styles.modalOverlay}>
-        <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Edit Task</Text>
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Edit Task</Text>
 
-          <TextInput
-            style={styles.modalInput}
-            placeholder="Task name"
-            value={editText}
-            onChangeText={onChangeText}
-            autoFocus={true}
-            onSubmitEditing={onSave}
-            returnKeyType="done"
-          />
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Task name"
+              value={editText}
+              onChangeText={onChangeText}
+              autoFocus={true}
+              onSubmitEditing={onSave}
+              returnKeyType="done"
+            />
 
-          <View style={styles.modalButtons}>
-  <TouchableOpacity
-    style={[styles.modalButton, styles.cancelButton]}
-    onPress={onCancel}
-  >
-    <Text style={styles.modalButtonText}>Cancel</Text>
-  </TouchableOpacity>
+            <NotificationPicker
+              selected={notificationDate}
+              onSelect={onNotificationChange}
+            />
 
-  <TouchableOpacity style={styles.modalButton} onPress={onSave}>
-    <Text style={styles.modalButtonText}>Save</Text>
-  </TouchableOpacity>
-</View>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.cancelButton]}
+                onPress={onCancel}
+              >
+                <Text style={styles.modalButtonText}>Cancel</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.modalButton} onPress={onSave}>
+                <Text style={styles.modalButtonText}>Save</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
-      </View>
-     </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
