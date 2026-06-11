@@ -8,7 +8,7 @@ import AddTodoModal from '../components/AddTodoModal';
 import CompletedModal from '../components/CompletedModal';
 import EditTodoModal from '../components/EditTodoModal';
 import TodoItem from '../components/TodoItem';
-import { Colors, Shadows, Spacing, Typography } from '../constants/theme';
+import { Colors, Spacing, Typography } from '../constants/theme';
 import { Todo } from '../types/Todo';
 import { generateWittyNotification } from '../utils/aiNotifications';
 import { cancelNotification, requestNotificationPermissions, scheduleNotification } from '../utils/notifications';
