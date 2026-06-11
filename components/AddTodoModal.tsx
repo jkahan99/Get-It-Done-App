@@ -1,5 +1,5 @@
 import React from 'react';
-import { KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { KeyboardAvoidingView, Modal, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Colors } from '../constants/theme';
 import NotificationPicker from './NotificationPicker';
 
@@ -35,44 +35,39 @@ export default function AddTodoModal({
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <ScrollView
-              keyboardShouldPersistTaps="handled"
-              showsVerticalScrollIndicator={false}
-            >
-              <Text style={styles.modalTitle}>New Task</Text>
+            <Text style={styles.modalTitle}>New Task</Text>
 
-              <TextInput
-                style={styles.modalInput}
-                placeholder="What do you want to do?"
-                value={todoText}
-                onChangeText={onChangeText}
-                autoFocus={true}
-                onSubmitEditing={onAdd}
-                returnKeyType="done"
-              />
+            <TextInput
+              style={styles.modalInput}
+              placeholder="What do you want to do?"
+              value={todoText}
+              onChangeText={onChangeText}
+              autoFocus={true}
+              onSubmitEditing={onAdd}
+              returnKeyType="done"
+            />
 
-              <NotificationPicker
-                selected={notificationDate}
-                onSelect={onNotificationChange}
-              />
+            <NotificationPicker
+              selected={notificationDate}
+              onSelect={onNotificationChange}
+            />
 
-              <View style={styles.modalButtons}>
-                <TouchableOpacity
-                  style={[styles.modalButton, styles.cancelButton]}
-                  onPress={onCancel}
-                >
-                  <Text style={styles.modalButtonText}>Cancel</Text>
-                </TouchableOpacity>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.cancelButton]}
+                onPress={onCancel}
+              >
+                <Text style={styles.modalButtonText}>Cancel</Text>
+              </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={[styles.modalButton, !todoText.trim() && styles.disabledButton]}
-                  onPress={onAdd}
-                  disabled={!todoText.trim()}
-                >
-                  <Text style={styles.modalButtonText}>Add</Text>
-                </TouchableOpacity>
-              </View>
-            </ScrollView>
+              <TouchableOpacity
+                style={[styles.modalButton, !todoText.trim() && styles.disabledButton]}
+                onPress={onAdd}
+                disabled={!todoText.trim()}
+              >
+                <Text style={styles.modalButtonText}>Add</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </KeyboardAvoidingView>
@@ -91,8 +86,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 12,
     padding: 20,
-    width: '80%',
-    maxHeight: '80%',
+    width: '85%',
   },
   modalTitle: {
     fontSize: 20,

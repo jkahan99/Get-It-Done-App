@@ -1,6 +1,6 @@
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
+import React, { useState } from 'react';
 import { Keyboard, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Colors, Spacing, Typography } from '../constants/theme';
 
@@ -28,14 +28,16 @@ function getActiveChip(date: Date | null): ChipId | null {
 }
 
 export default function NotificationPicker({ selected, onSelect }: NotificationPickerProps) {
-  const activeChip = getActiveChip(selected);
+  const [mode, setMode] = useState<ChipId | null>(() => getActiveChip(selected));
 
   const handleChipPress = (id: ChipId) => {
     Keyboard.dismiss();
-    if (activeChip === id) {
+    if (mode === id) {
+      setMode(null);
       onSelect(null);
       return;
     }
+    setMode(id);
     if (id === '1hr') {
       onSelect(new Date(Date.now() + 3_600_000));
     } else if (id === '1day') {
@@ -54,7 +56,7 @@ export default function NotificationPicker({ selected, onSelect }: NotificationP
       <Text style={styles.label}>Remind me</Text>
       <View style={styles.row}>
         {CHIPS.map(({ id, label, icon }) => {
-          const isSelected = activeChip === id;
+          const isSelected = mode === id;
           return (
             <TouchableOpacity
               key={id}
@@ -75,7 +77,7 @@ export default function NotificationPicker({ selected, onSelect }: NotificationP
         })}
       </View>
 
-      {activeChip === 'other' && selected && (
+      {mode === 'other' && selected && (
         <View style={styles.datePickerRow}>
           <DateTimePicker
             value={selected}
