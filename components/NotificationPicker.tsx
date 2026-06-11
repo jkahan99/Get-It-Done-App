@@ -1,7 +1,7 @@
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Keyboard, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Colors, Spacing, Typography } from '../constants/theme';
 
 type ChipId = '1hr' | '1day' | 'other';
@@ -17,7 +17,7 @@ const CHIPS: { id: ChipId; label: string; icon: string }[] = [
   { id: 'other', label: 'Other', icon: 'calendar-outline' },
 ];
 
-const TOLERANCE_MS = 5 * 60 * 1000; // 5-minute window to match a preset chip
+const TOLERANCE_MS = 5 * 60 * 1000;
 
 function getActiveChip(date: Date | null): ChipId | null {
   if (!date) return null;
@@ -31,6 +31,7 @@ export default function NotificationPicker({ selected, onSelect }: NotificationP
   const activeChip = getActiveChip(selected);
 
   const handleChipPress = (id: ChipId) => {
+    Keyboard.dismiss();
     if (activeChip === id) {
       onSelect(null);
       return;
