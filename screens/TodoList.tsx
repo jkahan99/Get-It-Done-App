@@ -61,7 +61,7 @@ const addTodo = async (title: string, notificationDate: Date | null) => {
   ));
 };
 
-const toggleComplete = (id: number) => {
+const toggleComplete = async (id: number) => {
   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
   const todo = todos.find(t => t.id === id);
@@ -93,6 +93,17 @@ const toggleComplete = (id: number) => {
       }
       return todo;
     }));
+
+    if (todo?.notificationDate) {
+      const notificationDate = new Date(todo.notificationDate);
+      if (notificationDate > new Date()) {
+        const message = await generateWittyNotification(todo.title);
+        const nId = await scheduleNotification(id, message, notificationDate);
+        setTodos(prev => prev.map(t =>
+          t.id === id ? { ...t, notificationIds: [nId] } : t
+        ));
+      }
+    }
   }
 };
 
