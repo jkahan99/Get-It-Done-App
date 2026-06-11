@@ -79,7 +79,7 @@ export default function NotificationPicker({ selected, onSelect }: NotificationP
           <DateTimePicker
             value={selected}
             mode="datetime"
-            display={Platform.OS === 'ios' ? 'compact' : 'default'}
+            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
             onChange={handleDateChange}
             minimumDate={new Date()}
           />
